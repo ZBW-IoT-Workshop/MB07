@@ -1,0 +1,33 @@
+/* @theme custom */
+
+@import 'uncover';
+
+section {
+    background-image: url('assets/background.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.two-columns {
+    margin-top: 35px;
+    column-count: 2;
+    column-gap: 2rem;
+}
+
+.two-columns p:first-child,
+.two-columns h2:first-child,
+.two-columns h3:first-child,
+.two-columns ul:first-child,
+.two-columns ul li:first-child,
+.two-columns ul li p:first-child {
+    margin-top: 0 !important;
+}
+
+.two-columns p.break {
+    break-before: column;
+    margin-top: 0;
+}
+
+section.small-text {
+    font-size: 30px;
+}
