@@ -23,10 +23,10 @@ jobs:
         run: mkdir -p dist
 
       - name: Build HTML
-        run: npx @marp-team/marp-cli@latest slide-deck.md --theme ./custom.css -o dist/slide-deck.html
+        run: npx @marp-team/marp-cli@latest crypto_embeded.md --theme ./custom.css -o dist/crypto_embeded.html
 
       - name: Build PDF
-        run: npx @marp-team/marp-cli@latest slide-deck.md --theme ./custom.css --allow-local-files -o dist/slide-deck.pdf
+        run: npx @marp-team/marp-cli@latest crypto_embeded.md --theme ./custom.css --allow-local-files -o dist/crypto_embeded.pdf
 
       - name: Show build output
         run: ls -lah dist
@@ -35,10 +35,10 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: slide-html
-          path: dist/slide-deck.html
+          path: dist/crypto_embeded.html
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v6
         with:
           name: slide-pdf
-          path: dist/slide-deck.pdf
+          path: dist/crypto_embeded.pdf
