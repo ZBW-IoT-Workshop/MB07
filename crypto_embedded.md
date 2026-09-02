@@ -22,7 +22,7 @@ _Fredy Hirt - 02.09.2026_
 
 - Ihr versteht die grundlegenden Unterschiede zwischen Authentifizierung und Autorisierung
 - Ihr kennt die Mechanismen zur Authentifizierung und Autorisierung in MQTT
-- Ihr unterscheidet zwischen phyischer und logischer Topic-Modelleriung
+- Ihr unterscheidet zwischen physischer und logischer Topic-Modellierung
 
 ---
 
@@ -61,57 +61,99 @@ _Fredy Hirt - 02.09.2026_
 - Ein gemeinsamer geheimer Key
 - Sender und Empfänger kennen denselben Key
 
----
-
-## Eigenschaften
-
-✅ Einfach zu implementieren
-✅ Schnell
+Klartext + Key → Chiffretext
+Chiffretext + Key → Klartext
 
 ---
 
 ## Eigenschaften
 
-❌ Schlüssel muss sicher verteilt werden  
-❌ Ein kompromittierter Key kompromittiert alles
+✅ Schnell  
+✅ Geringer Rechen- und Speicheraufwand  
+✅ Gut für grosse Datenmengen
+
+---
+
+## Eigenschaften
+
+❌ Keys müssen sicher verteilt werden  
+❌ Keys müssen sicher gespeichert werden  
+❌ Ein kompromittierter Key kompromittiert alle Gerräte die desnelben Key verwenden
+
+💡 Ein Key pro Gerät begrenzt den Schaden bei einer Kompromittierung
 
 ---
 
 ## Typische symmetrische Algorithmen
 
-- AES-128
-- AES-256
+- AES-128 / AES-256
 - ChaCha20
+
+Typische sichere Kombinationen:
+
+- AES-GCM
+- ChaCha20-Poly1305
 
 ---
 
 ## Asymmetrische Kryptographie
 
-- Zwei Schlüssel:
-  - **Public Key** 🔓
-  - **Private Key** 🔐
-- Was mit dem einen verschlüsselt wird, kann nur mit dem anderen entschlüsselt werden
+- Zwei zusammengehörige Schlüssel:
+  - **Public Key**
+  - **Private Key**
+- **Public Key** darf verteilt werden
+- **Private Key** muss geheim bleiben
+
+---
+
+## Asymmetrische Kryptographie
+
+**Verschlüsselung**
+Public Key → verschlüsseln
+Private Key → entschlüsseln
+
+**Digitale Signatur**
+Private Key → signieren
+Public Key → Signatur prüfen
 
 ---
 
 ## Eigenschaften
 
 ✅ Kein Shared Secret nötig
+✅ Digitale Signaturen für Authentizität
 
 ---
 
 ## Eigenschaften
 
-❌ Komplex  
-❌ Rechenintensiv
+❌ Komplexer als symmetrische Kryptographie
+❌ Höherer Rechen- und Speicheraufwand
+❌ Private Keys müssen besonders geschützt werden
 
 ---
 
 ## Typische asymmetrische Algorithmen
 
-- RSA
+- RSA (Signaturen & Verschlüsselung)
 - ECDSA (Signaturen)
 - ECDHE (Key Exchange)
+
+---
+
+## Welches Verfahren passt?
+
+- Prüfen, ob Firmware tatsächlich vom Hersteller stammt?
+- Effiziente Übertragung von Sensordaten?
+- Gemeinsamen Sitzungsschlüssel zwischen Client und Broker aushandeln?
+
+---
+
+## Welches Verfahren passt?
+
+- Firmware vom Hersteller → Digitale Signatur (z.B. ECDSA)
+- Sensordaten übertragen → Symmetrich (z.B. AES-GCM)
+- Sitzungsschlüssel aushandeln → Asymmetrisch (z.B. ECDHE)
 
 ---
 
@@ -128,7 +170,6 @@ MQTT + TLS = MQTTS
 ## Was macht TLS?
 
 - TLS kombiniert:
-
   - Asymmetrische Kryptographie
   - Symmetrische Kryptographie
 
@@ -137,16 +178,17 @@ MQTT + TLS = MQTTS
 ## Warum Kombination?
 
 - Asymmetrisch:
-
-  - Authenfizierung
+  - Broker authentifizieren
+  - Clients authentifizieren
   - Session-Key aushandeln
 
 - Symmetrisch:
-  - Schnelle Datenübertragung
+  - MQTT-Daten effizient verschlüsseln
+  - Integrität der Nachrichten schützen
 
 ---
 
-## PKI – Chain of Trust
+## PKI – Public Key Infrastructure
 
 Problem:
 
@@ -181,7 +223,7 @@ Zertifikate enthalten:
 <!-- _class: small-text -->
 
 - Geräte sind physisch zugänglich
-- Flash kann ausgelesen werden
+- Speicher (Flash) kann ausgelesen werden
 - Firmware kann manipuliert werden
 - Keys können extrahiert werden
 - Side-Channel-Angriffe
@@ -192,12 +234,25 @@ Zertifikate enthalten:
 
 ## Secure Boot
 
-Bootloader prüft:
+Nur vertrauenswürdig signierte Software wird gestartet.
 
 - Ist die Firmware digital signiert?
   - Ja → Start
   - Nein → Stop
-- Schützt vor manipulierten Images
+- Schützt vor manipulierten Firmware-Images
+
+---
+
+## Was Secure Boot nicht schützt
+
+- das Auslesen der Firmware
+- das Extrahieren von Schlüsseln
+
+Dafür braucht es zusätzliche Massnahmen:
+
+- Debug-Interfaces (JTAG) sperren (fusen)
+- Flash-Auslesen verhindern
+- Schlüssel in geschütztem Speicher ablegen
 
 ---
 
@@ -211,13 +266,13 @@ Bootloader prüft:
 
 ---
 
-## OTA Updates
+## OTA-Updates
 
 Over-The-Air Updates müssen:
 
-- Verschlüsselt übertragen werden
 - Signiert sein
 - Versioniert sein
+- Verschlüsselt übertragen werden
 - Rollback-Schutz besitzen
 
 ---
